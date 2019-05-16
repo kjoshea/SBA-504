@@ -1,6 +1,6 @@
 from itertools import zip_longest
-#INPUT DEAL NAME
-name = input('Enter Deal Name:')
+# INPUT DEAL NAME
+deal_name = input('Enter Deal Name:')
 
 # INPUT LOAN AMOUNT
 loan_amount = int(input('Enter 1st Loan Amount:'))
@@ -10,7 +10,7 @@ rate = float(input('Enter 1st Rate: '))/100
 mo_rate = rate/12
 
 # INPUT TERM IN MONTHS
-term = int(input('Enter  1st Term Months:'))
+term = int(input('Enter 1st Term Months:'))
 term_periods = [x for x in range(1,term+1)]
 
 # INPUT AMORT IN MONTHS
@@ -79,31 +79,39 @@ for x,y in zip_longest(amort_table[1:],amort_table2[1:]):
   int_paid3 = x[4] + y[4]
   current_balance3 = x[5] + y[5]
   blended_rate = ((rate*(x[1]/beg_balance3)) + (rate2*(y[1]/beg_balance3)))*100
-  amort_table3.append((y[0], '{:,}'.format(beg_balance3), '{:,}'.format(mo_payment3), '{:,}'.format(principal3), '{:,}'.format(int_paid3), '{:,}'.format(current_balance3), '{:.4f}%'.format(blended_rate)))
+  amort_table3.append((y[0], '{:,}'.format(beg_balance3), '{:,}'.format(mo_payment3), '{:,}'.format(principal3), '{:,}'.format(int_paid3), '{:,}'.format(current_balance3), '{:.2f}%'.format(blended_rate)))
 
 blended_rate = amort_table3[1][6]
 
 # -------------------------------------------------------------------------------------
+# ORGANIZE LOAN SUMMARY INTO LIST OF LISTS AND TWO SEPARATE LISTS FOR FIELDS AND VALUES
+loan_summary = [['Deal Name','{}'.format(deal_name)], ['1st Loan Amount','${:,}'.format(loan_amount)], ['1st Interest Rate','{:.2f}%'.format(rate*100)], ['1st Monthly Payment','${:,.0f}'.format(mo_payment)],
+                ['1st Loan Term','{} months'.format(term)], ['1st Loan Amortization','{} months'.format(amort)], ['',''], ['2nd Loan Amount','${:,}'.format(loan_amount2)], ['2nd Interest Rate','{:.2f}%'.format(rate2*100)],
+                ['2nd Monthly Payment','${:,.0f}'.format(mo_payment2)], ['2nd Loan Term','{} months'.format(term2)], ['2nd Loan Amortization','{} months'.format(amort2)], ['',''], ['Total Financing','${:,}'.format(total_financing)],
+                ['Blended Rate','{}'.format(blended_rate)], ['Total Monthly Payment','${:,.0f}'.format(total_mo_payment)]]
+loan_summary_fields = [_[0] for _ in loan_summary]
+loan_summary_values = [_[1] for _ in loan_summary]
+
 # PRINT OUT LOAN SUMMARY
 # print('1st Loan Amount: ${:,}'.format(loan_amount))
 # print('1st Interest Rate: {:.2f}%'.format(rate*100))
-# print('Monthly Payment: ${:,.0f}'.format(mo_payment))
+# print('1st Monthly Payment: ${:,.0f}'.format(mo_payment))
 # print('1st Loan Term: {} months'.format(term))
-# print('1st Amortization: {} months'.format(amort))
+# print('1st Loan Amortization: {} months'.format(amort))
 
 # print('')
 
 # print('2nd Loan Amount: ${:,}'.format(loan_amount2))
 # print('2nd Interest Rate: {:.2f}%'.format(rate2*100))
-# print('Monthly Payment: ${:,.0f}'.format(mo_payment2))
+# print('2nd Monthly Payment: ${:,.0f}'.format(mo_payment2))
 # print('2nd Loan Term: {} months'.format(term2))
-# print('2nd Amortization: {} months'.format(amort2))
+# print('2nd Loan Amortization: {} months'.format(amort2))
 
 print('')
 
 print('Total Financing: ${:,}'.format(total_financing))
 print('Blended Rate: {}'.format(blended_rate))
-print('Total Monthly Payment: {:,.0f}'.format(total_mo_payment))
+print('Total Monthly Payment: ${:,.0f}'.format(total_mo_payment))
 
 print('')
 
@@ -124,38 +132,30 @@ for x in range(1,len(amort_table3)):
 print(new_table)
 
 
+#CREATE EXCEL FILE OF AMORTIZATION TABLE
+import pandas as pd
+
+df = pd.DataFrame(amort_table3)
+
+writer = pd.ExcelWriter("C:/Users/KevinO'Shea/OneDrive - Liberty SBF/Training/Python Practice/Amortization Table/Excel/Output/{}.xlsx".format(deal_name), engine='xlsxwriter')
+
+df.to_excel(writer, sheet_name='Amortization')
+
+# ADD WORKSHEET WITH THE LOAN SUMMARY PRINTED IN THE TOP LEFT AS TWO COLUMNS
+workbook = writer.book
+worksheet_2 = workbook.add_worksheet('Deal Info')
+worksheet_2.write_column('A1',loan_summary_fields)
+worksheet_2.write_column('B1',loan_summary_values)
+
+
+writer.save()
+
+print('Outputted to excel file')
 
 
 # ----------------------------------------------------------------------------------------------------------------------------------------------------
 # TO DO
 # 1) Make it work when length of the 1st term is longer than the 2nd's term
 # 2) Format input (So it shows a % when you input rate or comma's when you enter the loan amounts)
-# 3) Output the amortization table in an excel or csv file
-
+# 3) Add additional tabs of loan information
 # -------------------------------------------------------------------------------------------------------------------------------
-
-#OUTPUT TO CSV
-import csv
-
-#myFile = open(r"C:\Users\PC\PycharmProjects\AmortizationTable\", 'wb')
-with open("C:/Users/PC/PycharmProjects/AmortizationTable/{}.csv".format(name), 'w') as f:
-	writer = csv.writer(f)
-	writer.writerows(amort_table3)
-
-print('Outputted to csv file')
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
