@@ -1,3 +1,3 @@
 # SBA504
 
-A script that takes input from the User and outputs an excel file with relevant information related to the SBA 504 loan inputted.
+A script that takes input from the User (1st and 2nd Loan Information) and outputs a combined amortization table in the command line and in Excel.
